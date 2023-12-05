@@ -2,7 +2,12 @@ var express = require("express");
 var router = express.Router();
 var db = require("../conexion/conexion");
 const multer = require("multer");
-const ExifParser = require("exif-parser");
+const {
+  imagen: uploadImagen, // Cambié el nombre para evitar conflictos
+} = require("../public/src/controllers/imageController");
+
+var fecha = require("../public/src/controllers/dateController");
+var imagen = require("../public/src/controllers/imageController");
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -12,31 +17,26 @@ router.get("/", function (req, res, next) {
   res.render("layouts/aportaciones", { title: "Aportacion" });
 });
 
-/* POST home page.(aportaciones.ejs) */
+/* POST home page. (aportaciones.ejs) */
 router.post("/", upload.single("imagen"), function (req, res, next) {
   try {
-    //establecemos la fecha para la imagen
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const formattedDate = `${year}/${month}/${day}`;
-    //obtenemos los datos del form
+    // Establecemos la fecha para la imagen
+    var nuevaFecha = fecha();
     const data = req.body;
+    // Obtener datos de la imagen a través de la función 'imagen'
+    const img = uploadImagen(req);
+    if (img && img[0] && img[1]) {
+      var metadata = img[1];
+      var imagenBuffer = img[0];
 
-    if (req.file && req.file.buffer) {
-      //buffer espacio temporal en memoria
-      const buffer = req.file.buffer;
-      //analiza los datos binarios en el buffer
-      const parser = ExifParser.create(buffer);
-      //extrae los metadatos de la imagen
-      const metadata = parser.parse();
-
-      console.log("Metadatos de la imagen:", metadata);
-      //consulta SQL para insertar los datos
+      console.log("imagenBuffer:", imagenBuffer);
+      console.log("data.descripcion:", data.descripcion);
+      console.log("nuevaFecha:", nuevaFecha);
+      console.log("JSON.stringify(metadata):", JSON.stringify(metadata));
+      // Consulta SQL para insertar los datos
       db.query(
         "INSERT INTO aportaciones(imagen, descripcion, fecha, metadatos) VALUES (?,?,?,?)",
-        [buffer, data.descripcion, formattedDate, JSON.stringify(metadata)]
+        [imagenBuffer, data.descripcion, nuevaFecha, JSON.stringify(metadata)]
       );
 
       console.log("Subido con éxito");
