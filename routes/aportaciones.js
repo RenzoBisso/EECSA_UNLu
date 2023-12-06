@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-var db = require("../conexion/conexion");
+var db = require("../public/conexion/conexion");
 const multer = require("multer");
 const {
   imagen: uploadImagen, // Cambié el nombre para evitar conflictos

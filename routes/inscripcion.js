@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-var db = require("../conexion/conexion");
+var db = require("../public/conexion/conexion");
 
 /* GET home page.(inscripcion.ejs) */
 router.get("/", function (req, res) {

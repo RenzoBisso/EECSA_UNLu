@@ -2,15 +2,13 @@
 <br><br>
 <h2 class="text-center"><%= title %></h2>
 <section id="galeria" class="container">
-    <div class="row">
-    <% imagenesBase64.forEach(function(base64String) { %>
-        
-            <div class="col-md-4">
-                <img class="img-fluid" src="data:image/png;base64,<%= base64String %>" alt="Imagen">
-            </div>
-        
-    <% }); %>
-</div>
+    <div class="row m-5">
+        <% imagenesBase64.forEach(function(base64String) { %>
+                <div class="col-lg-4 mb-4"> 
+                    <img class="img-fluid" src="data:image/png;base64,<%= base64String %>" alt="Imagen">
+                </div>  
+        <% }); %>
+    </div>
 </section>
 <%- include('footer.ejs') %>
 
